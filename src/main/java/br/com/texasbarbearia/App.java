@@ -16,18 +16,19 @@ public class App {
         AgendamentoDAO agendamentoDao = new AgendamentoDAO();
         int opcao = 0;
 
-        while (opcao != 11) { // Atualizado para 11
+        while (opcao != 13) {
             System.out.println("\n--- GESTÃO TEXAS BARBEARIA ---");
             System.out.println("1 - Cadastrar Cliente   | 5 - Cadastrar Serviço");
             System.out.println("2 - Listar Clientes     | 6 - Listar Serviços");
             System.out.println("3 - Atualizar Cliente   | 7 - Atualizar Serviço");
             System.out.println("4 - Excluir Cliente     | 8 - Excluir Serviço");
             System.out.println("9 - Novo Agendamento    | 10 - Listar Agendamentos");
-            System.out.println("11 - Sair");
+            System.out.println("11 - Atualizar Status   | 12 - Faturamento Diário");
+            System.out.println("13 - Sair");
             System.out.print("Escolha uma opção: ");
             
             opcao = scanner.nextInt();
-            scanner.nextLine();
+            scanner.nextLine(); // Limpar buffer
 
             if (opcao == 1) {
                 System.out.print("Nome: ");
@@ -102,16 +103,51 @@ public class App {
                 scanner.nextLine(); 
                 System.out.print("Data e Hora (ex: 2026-10-25 14:30): ");
                 String dataHora = scanner.nextLine();
-                agendamentoDao.cadastrar(new Agendamento(idCliente, idServico, dataHora));
+                
+                if (agendamentoDao.verificarHorarioOcupado(dataHora)) {
+                    System.out.println("❌ ERRO: Já existe um agendamento ativo para este horário! Escolha outro.");
+                } else {
+                    agendamentoDao.cadastrar(new Agendamento(idCliente, idServico, dataHora));
+                }
 
             } else if (opcao == 10) {
                 System.out.println("\n--- LISTA DE AGENDAMENTOS ---");
                 for (Agendamento a : agendamentoDao.listarTodos()) {
                     System.out.println("ID: " + a.getId() + " | Cliente: " + a.getNomeCliente() + 
-                                       " | Serviço: " + a.getDescricaoServico() + " | Data: " + a.getDataHora());
+                                       " | Serviço: " + a.getDescricaoServico() + " | Data: " + a.getDataHora() + 
+                                       " | Status: [" + a.getStatus() + "]");
                 }
 
-            } else if (opcao != 11) {
+            } else if (opcao == 11) {
+                System.out.println("\n--- ATUALIZAR STATUS ---");
+                System.out.print("Digite o ID do Agendamento: ");
+                int idAgendamento = scanner.nextInt();
+                scanner.nextLine(); // Limpar buffer
+                
+                System.out.println("Escolha o novo status:");
+                System.out.println("1 - CONCLUÍDO (Cliente pagou)");
+                System.out.println("2 - CANCELADO (Cliente faltou)");
+                System.out.print("Opção: ");
+                int opStatus = scanner.nextInt();
+                scanner.nextLine();
+                
+                if (opStatus == 1) {
+                    agendamentoDao.atualizarStatus(idAgendamento, "CONCLUIDO");
+                } else if (opStatus == 2) {
+                    agendamentoDao.atualizarStatus(idAgendamento, "CANCELADO");
+                } else {
+                    System.out.println("Status inválido.");
+                }
+
+            } else if (opcao == 12) {
+                System.out.println("\n--- FATURAMENTO DIÁRIO ---");
+                System.out.print("Digite a data para consultar (Formato YYYY-MM-DD, ex: 2026-10-25): ");
+                String dataConsulta = scanner.nextLine();
+                
+                double totalFaturado = agendamentoDao.calcularFaturamentoDiario(dataConsulta);
+                System.out.println("💰 Faturamento total do dia " + dataConsulta + ": R$ " + totalFaturado);
+
+            } else if (opcao != 13) {
                 System.out.println("Opção inválida!");
             }
         }
