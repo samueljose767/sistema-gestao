@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
 import br.com.texasbarbearia.config.ConexaoFactory;
 import br.com.texasbarbearia.model.Agendamento;
 
@@ -24,7 +25,6 @@ public class AgendamentoDAO {
         }
     }
 
-    // Novo método para mudar o status
     public void atualizarStatus(int id, String novoStatus) {
         String sql = "UPDATE agendamentos SET status = ? WHERE id = ?";
         try (Connection conexao = ConexaoFactory.obterConexao();
@@ -54,7 +54,6 @@ public class AgendamentoDAO {
     }
 
     public List<Agendamento> listarTodos() {
-        // Adicionamos a.status no SELECT
         String sql = "SELECT a.id, c.nome AS cliente_nome, s.descricao AS servico_desc, a.data_hora, a.status " +
                      "FROM agendamentos a " +
                      "INNER JOIN clientes c ON a.cliente_id = c.id " +
@@ -72,7 +71,7 @@ public class AgendamentoDAO {
                     rs.getString("cliente_nome"),
                     rs.getString("servico_desc"),
                     rs.getString("data_hora"),
-                    rs.getString("status") // Puxamos o status do banco
+                    rs.getString("status") 
                 );
                 agendamentos.add(agendamento);
             }
@@ -82,9 +81,7 @@ public class AgendamentoDAO {
         return agendamentos;
     }
 
-    // Novo método para calcular o faturamento
     public double calcularFaturamentoDiario(String data) {
-        // O comando DATE() extrai apenas a data do formato YYYY-MM-DD HH:MM
         String sql = "SELECT SUM(s.valor) FROM agendamentos a " +
                      "INNER JOIN servicos s ON a.servico_id = s.id " +
                      "WHERE a.status = 'CONCLUIDO' AND DATE(a.data_hora) = ?";
@@ -96,10 +93,50 @@ public class AgendamentoDAO {
             ResultSet rs = stmt.executeQuery();
             
             if (rs.next()) {
-                return rs.getDouble(1); // Retorna a soma total
+                return rs.getDouble(1); 
             }
         } catch (Exception e) {
             System.out.println("Erro ao calcular faturamento: " + e.getMessage());
+        }
+        return 0.0;
+    }
+
+    public double calcularFaturamentoMensal(String anoMes) {
+        String sql = "SELECT SUM(s.valor) FROM agendamentos a " +
+                     "INNER JOIN servicos s ON a.servico_id = s.id " +
+                     "WHERE a.status = 'CONCLUIDO' AND DATE_FORMAT(a.data_hora, '%Y-%m') = ?";
+        
+        try (Connection conexao = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+             
+            stmt.setString(1, anoMes);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao calcular faturamento mensal: " + e.getMessage());
+        }
+        return 0.0;
+    }
+
+    public double calcularFaturamentoSemanal(String data) {
+        String sql = "SELECT SUM(s.valor) FROM agendamentos a " +
+                     "INNER JOIN servicos s ON a.servico_id = s.id " +
+                     "WHERE a.status = 'CONCLUIDO' AND YEARWEEK(a.data_hora, 1) = YEARWEEK(?, 1)";
+        
+        try (Connection conexao = ConexaoFactory.obterConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+             
+            stmt.setString(1, data);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao calcular faturamento semanal: " + e.getMessage());
         }
         return 0.0;
     }

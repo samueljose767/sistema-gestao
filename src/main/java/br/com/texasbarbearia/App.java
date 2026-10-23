@@ -23,7 +23,7 @@ public class App {
             System.out.println("3 - Atualizar Cliente   | 7 - Atualizar Serviço");
             System.out.println("4 - Excluir Cliente     | 8 - Excluir Serviço");
             System.out.println("9 - Novo Agendamento    | 10 - Listar Agendamentos");
-            System.out.println("11 - Atualizar Status   | 12 - Faturamento Diário");
+            System.out.println("11 - Atualizar Status   | 12 - Relatórios Financeiros");
             System.out.println("13 - Sair");
             System.out.print("Escolha uma opção: ");
             
@@ -140,12 +140,36 @@ public class App {
                 }
 
             } else if (opcao == 12) {
-                System.out.println("\n--- FATURAMENTO DIÁRIO ---");
-                System.out.print("Digite a data para consultar (Formato YYYY-MM-DD, ex: 2026-10-25): ");
-                String dataConsulta = scanner.nextLine();
+                System.out.println("\n--- RELATÓRIOS DE FATURAMENTO ---");
+                System.out.println("1 - Diário");
+                System.out.println("2 - Semanal");
+                System.out.println("3 - Mensal");
+                System.out.print("Escolha o tipo de relatório: ");
                 
-                double totalFaturado = agendamentoDao.calcularFaturamentoDiario(dataConsulta);
-                System.out.println("💰 Faturamento total do dia " + dataConsulta + ": R$ " + totalFaturado);
+                int tipoRelatorio = scanner.nextInt();
+                scanner.nextLine(); // Limpar buffer
+                
+                if (tipoRelatorio == 1) {
+                    System.out.print("Digite a data (Formato YYYY-MM-DD, ex: 2026-10-23): ");
+                    String data = scanner.nextLine();
+                    double total = agendamentoDao.calcularFaturamentoDiario(data);
+                    System.out.println("💰 Faturamento Diário (" + data + "): R$ " + total);
+                    
+                } else if (tipoRelatorio == 2) {
+                    System.out.print("Digite uma data qualquer dessa semana (YYYY-MM-DD, ex: 2026-10-23): ");
+                    String data = scanner.nextLine();
+                    double total = agendamentoDao.calcularFaturamentoSemanal(data);
+                    System.out.println("💰 Faturamento Semanal: R$ " + total);
+                    
+                } else if (tipoRelatorio == 3) {
+                    System.out.print("Digite o ano e mês (Formato YYYY-MM, ex: 2026-10): ");
+                    String anoMes = scanner.nextLine();
+                    double total = agendamentoDao.calcularFaturamentoMensal(anoMes);
+                    System.out.println("💰 Faturamento Mensal (" + anoMes + "): R$ " + total);
+                    
+                } else {
+                    System.out.println("Opção de relatório inválida.");
+                }
 
             } else if (opcao != 13) {
                 System.out.println("Opção inválida!");
