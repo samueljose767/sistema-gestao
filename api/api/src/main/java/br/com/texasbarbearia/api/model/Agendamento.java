@@ -34,3 +34,4 @@ public class Agendamento {
     public String getDescricaoServico() { return descricaoServico; }
     public String getStatus() { return status; }
 }
+

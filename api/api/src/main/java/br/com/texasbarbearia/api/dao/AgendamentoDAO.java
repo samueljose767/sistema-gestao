@@ -140,4 +140,23 @@ public class AgendamentoDAO {
         }
         return 0.0;
     }
+
+// FATURAMENTO SEMANAL
+public double calcularFaturamentoSemanal(String inicio, String fim) {
+    String sql = "SELECT SUM(s.preco) as total FROM agendamentos a INNER JOIN servicos s ON a.servico_id = s.id WHERE DATE(a.data_hora) BETWEEN ? AND ?";
+    double total = 0.0;
+    try (Connection conexao = ConexaoFactory.obterConexao();
+         PreparedStatement stmt = conexao.prepareStatement(sql)) {
+        stmt.setString(1, inicio);
+        stmt.setString(2, fim);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            total = rs.getDouble("total");
+        }
+    } catch (Exception e) {
+        System.out.println("Erro no faturamento semanal: " + e.getMessage());
+    }
+    return total;
+}
+
 }

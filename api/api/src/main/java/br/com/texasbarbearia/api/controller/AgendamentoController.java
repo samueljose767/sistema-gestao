@@ -19,13 +19,20 @@ public class AgendamentoController {
         return agendamentoDao.listarTodos();
     }
 
-    // Exemplo de link: http://localhost:8081/agendamentos/faturamento/diario?data=2026-10-23
+    // Exemplo: http://localhost:8081/agendamentos/faturamento/diario?data=2026-10-23
     @GetMapping("/faturamento/diario")
     public double faturamentoDiario(@RequestParam String data) {
         return agendamentoDao.calcularFaturamentoDiario(data);
     }
 
-    // Exemplo de link: http://localhost:8081/agendamentos/faturamento/mensal?anoMes=2026-10
+    // Exemplo: http://localhost:8081/agendamentos/faturamento/semanal?inicio=2026-10-19&fim=2026-10-25
+    @GetMapping("/faturamento/semanal")
+    public double faturamentoSemanal(@RequestParam String inicio, @RequestParam String fim) {
+        // Se o seu método no DAO tiver outro nome, altere 'calcularFaturamentoSemanal' aqui:
+        return agendamentoDao.calcularFaturamentoSemanal(inicio, fim);
+    }
+
+    // Exemplo: http://localhost:8081/agendamentos/faturamento/mensal?anoMes=2026-10
     @GetMapping("/faturamento/mensal")
     public double faturamentoMensal(@RequestParam String anoMes) {
         return agendamentoDao.calcularFaturamentoMensal(anoMes);

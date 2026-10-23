@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel - Texas Barbearia</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; margin: 0; }
+        h1 { color: #1a1a1a; margin-bottom: 30px; }
+        .container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1000px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); text-align: center; flex: 1; min-width: 230px; }
+        h2 { color: #555; margin-top: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .valor { font-size: 2rem; color: #27ae60; font-weight: bold; margin: 15px 0; }
+        button { background: #1a1a1a; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; width: 100%; transition: background 0.3s; margin-bottom: 10px; }
+        button:hover { background: #4a4a4a; }
+        .lista-clientes { text-align: left; list-style: none; padding: 0; max-height: 200px; overflow-y: auto; margin-top: 15px; }
+        .lista-clientes li { padding: 10px 5px; border-bottom: 1px solid #eee; font-size: 0.95rem; color: #333; }
+        .lista-clientes li strong { color: #1a1a1a; }
+    </style>
+</head>
+<body>
+
+    <h1>Painel de Controle</h1>
+
+    <div class="container">
+        <!-- Cartão: Faturamento Mensal -->
+        <div class="card">
+            <h2>Mensal (Out/26)</h2>
+            <div class="valor" id="valorFaturamentoMensal">R$ 0,00</div>
+            <button onclick="carregarFaturamentoMensal()">Atualizar</button>
+        </div>
+
+        <!-- Cartão: Faturamento Semanal -->
+        <div class="card">
+            <h2>Semanal (19 a 25/Out)</h2>
+            <div class="valor" id="valorFaturamentoSemanal">R$ 0,00</div>
+            <button onclick="carregarFaturamentoSemanal()">Atualizar</button>
+        </div>
+
+        <!-- Cartão: Faturamento Diário -->
+        <div class="card">
+            <h2>Diário (23/10/26)</h2>
+            <div class="valor" id="valorFaturamentoDiario">R$ 0,00</div>
+            <button onclick="carregarFaturamentoDiario()">Atualizar</button>
+        </div>
+
+        <!-- Cartão: Lista de Clientes -->
+        <div class="card">
+            <h2>Nossos Clientes</h2>
+            <button onclick="carregarClientes()">Carregar Lista</button>
+            <ul class="lista-clientes" id="listaClientes">
+                <li style="text-align: center; color: #999;">Clique para carregar...</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function carregarFaturamentoMensal() {
+            fetch('http://localhost:8081/agendamentos/faturamento/mensal?anoMes=2026-10')
+                .then(resposta => resposta.json())
+                .then(dados => document.getElementById('valorFaturamentoMensal').innerText = 'R$ ' + dados.toFixed(2))
+                .catch(erro => alert('Erro ao carregar faturamento mensal.'));
+        }
+
+        function carregarFaturamentoSemanal() {
+            fetch('http://localhost:8081/agendamentos/faturamento/semanal?inicio=2026-10-19&fim=2026-10-25')
+                .then(resposta => resposta.json())
+                .then(dados => document.getElementById('valorFaturamentoSemanal').innerText = 'R$ ' + dados.toFixed(2))
+                .catch(erro => alert('Erro ao carregar faturamento semanal.'));
+        }
+
+        function carregarFaturamentoDiario() {
+            fetch('http://localhost:8081/agendamentos/faturamento/diario?data=2026-10-23')
+                .then(resposta => resposta.json())
+                .then(dados => document.getElementById('valorFaturamentoDiario').innerText = 'R$ ' + dados.toFixed(2))
+                .catch(erro => alert('Erro ao carregar faturamento diário.'));
+        }
+
+        function carregarClientes() {
+            fetch('http://localhost:8081/clientes')
+                .then(resposta => resposta.json())
+                .then(dados => {
+                    const lista = document.getElementById('listaClientes');
+                    lista.innerHTML = ''; 
+                    dados.forEach(cliente => {
+                        const item = document.createElement('li');
+                        item.innerHTML = `<strong>${cliente.nome}</strong> <br> ${cliente.telefone}`;
+                        lista.appendChild(item);
+                    });
+                })
+                .catch(erro => alert('Erro ao carregar clientes.'));
+        }
+    </script>
+</body>
+</html>
