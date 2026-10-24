@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Cliente - Texas Barbearia</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { max-width: 400px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin: auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #218838; }
+        .voltar { display: block; text-align: center; margin-top: 15px; text-decoration: none; color: #007bff; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Cadastrar Cliente</h2>
+    <form id="formCliente">
+        <div class="form-group">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" required placeholder="Ex: João Silva">
+        </div>
+        <div class="form-group">
+            <label for="telefone">Telefone:</label>
+            <input type="text" id="telefone" required placeholder="Ex: 61999999999">
+        </div>
+        <div class="form-group">
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" required placeholder="Ex: joao@email.com">
+        </div>
+        <button type="submit">Salvar Cliente</button>
+    </form>
+    <a href="index.html" class="voltar">Voltar ao Painel</a>
+</div>
+
+<script>
+    // Oculta o envio padrão e faz a comunicação com a API
+    document.getElementById('formCliente').addEventListener('submit', function(event) {
+        event.preventDefault(); // Impede a página de recarregar
+
+        // Recolhe os dados dos campos
+        const dados = {
+            nome: document.getElementById('nome').value,
+            telefone: document.getElementById('telefone').value,
+            email: document.getElementById('email').value
+        };
+
+        // Envia para o motor (API)
+        fetch('/clientes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dados)
+        })
+        .then(response => {
+            if(response.ok || response.status === 201) {
+                alert('Cliente cadastrado com sucesso!');
+                document.getElementById('formCliente').reset(); // Limpa os campos
+            } else {
+                alert('Erro ao salvar o cliente. Verifique os dados.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Falha na comunicação com o servidor.');
+        });
+    });
+</script>
+
+</body>
+</html>
