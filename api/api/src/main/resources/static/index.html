@@ -56,28 +56,28 @@
 
     <script>
         function carregarFaturamentoMensal() {
-            fetch('http://localhost:8081/agendamentos/faturamento/mensal?anoMes=2026-10')
+            fetch('/agendamentos/faturamento/mensal?anoMes=2026-10')
                 .then(resposta => resposta.json())
                 .then(dados => document.getElementById('valorFaturamentoMensal').innerText = 'R$ ' + dados.toFixed(2))
                 .catch(erro => alert('Erro ao carregar faturamento mensal.'));
         }
 
         function carregarFaturamentoSemanal() {
-            fetch('http://localhost:8081/agendamentos/faturamento/semanal?inicio=2026-10-19&fim=2026-10-25')
+            fetch('/agendamentos/faturamento/semanal?inicio=2026-10-19&fim=2026-10-25')
                 .then(resposta => resposta.json())
                 .then(dados => document.getElementById('valorFaturamentoSemanal').innerText = 'R$ ' + dados.toFixed(2))
                 .catch(erro => alert('Erro ao carregar faturamento semanal.'));
         }
 
         function carregarFaturamentoDiario() {
-            fetch('http://localhost:8081/agendamentos/faturamento/diario?data=2026-10-23')
+            fetch('/agendamentos/faturamento/diario?data=2026-10-23')
                 .then(resposta => resposta.json())
                 .then(dados => document.getElementById('valorFaturamentoDiario').innerText = 'R$ ' + dados.toFixed(2))
                 .catch(erro => alert('Erro ao carregar faturamento diário.'));
         }
 
         function carregarClientes() {
-            fetch('http://localhost:8081/clientes')
+            fetch('/clientes')
                 .then(resposta => resposta.json())
                 .then(dados => {
                     const lista = document.getElementById('listaClientes');
