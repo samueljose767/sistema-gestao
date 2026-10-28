@@ -6,6 +6,10 @@ public class Cliente {
     private String telefone;
     private String email;
 
+    // Construtor vazio exigido pelo Spring Boot (Jackson) para receber dados JSON
+    public Cliente() {
+    }
+
     // Construtor para Inserir (sem ID, pois o MySQL gera automaticamente)
     public Cliente(String nome, String telefone, String email) {
         this.nome = nome;
