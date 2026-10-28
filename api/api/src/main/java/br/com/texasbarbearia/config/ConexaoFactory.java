@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class ConexaoFactory {
     
   
-    private static final String URL = "jdbc:mysql://mysql-317a5ab7-samueljose767-3931.d.aivencloud.com:26899/defaultdb?autoReconnect=true";
+    private static final String URL = "jdbc:mysql://mysql-317a5ab7-samueljose767-3931.d.aivencloud.com:26899/defaultdb?sslMode=REQUIRED&autoReconnect=true";
     
     
     private static final String USUARIO = "avnadmin";
